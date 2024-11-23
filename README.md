@@ -2,19 +2,33 @@
 
 A script to dynamically manage network traffic based on **95th percentile bandwidth limiting**. It enforces compliance with provider contracts by monitoring traffic patterns, supporting **1:2 burst configurations**, and applying intelligent bandwidth limits to prevent overuse and ensure smooth operations.
 
+
+需要部署在宿主机的出口网卡上，且该脚本仅在 Proxmox VE 8（ Debian 12）上通过测试
+This bandwidth management rule should be deployed on the host machine, and the system has only been tested on Proxmox VE 8 (based on Debian 12)
+
 预设特性
 
-		动态带宽限速: 当带宽连续3分钟（连续3个数据点）超过500 Mbps时，自动限速至498 Mbps（1:2突发模式）。
-		例外时间段: 每天19:00至23:00期间不生效。
-		每日重置: 每天凌晨清除所有数据点并重置限速规则。
-		每日带宽监控: 如果每天超过70个数据点的带宽超过500 Mbps，则无视动态带宽限速（包含例外）当天剩余时间限速至498 Mbps。
+ 1、动态带宽限速：
+ 规则：当带宽连续3分钟（连续3个数据点）超过500 Mbps时，限速至498 Mbps，持续7分钟
+ 例外：每天19:00至23:00期间不生效
 
-Features
+ 2、每日带宽监控：
+ 每天采集1440个数据点（每分钟1个）
+ 数据点为对应1分钟内的峰值带宽
+ 如果累计超过70个数据点的带宽超过500 Mbps，则无视动态带宽限速（包含例外）当天剩余时间限速至498 Mbps
 
-		Dynamic Bandwidth Limiting: Automatically limits bandwidth to 498 Mbps (1:2 burst) when usage exceeds 500 Mbps for 3 consecutive minutes.
-		Time-Based Exceptions: Skips limiting during peak hours (19:00–23:00).
-		Daily Reset: Resets all data points and limits at midnight.
-		Daily Bandwidth Monitoring: Caps bandwidth for the remainder of the day if usage exceeds 500 Mbps for more than 70 out of 1440 minutes, ignoring dynamic limiting (including exceptions).
+Preset Features
+
+1. Dynamic Bandwidth Limiting:
+
+Rule: When bandwidth exceeds 500 Mbps for 3 consecutive minutes (3 consecutive data points), limit the bandwidth to 498 Mbps for a duration of 7 minutes.
+Exception: Does not apply during 19:00 to 23:00 daily.
+
+2. Daily Bandwidth Monitoring:
+
+Collect 1440 data points per day (1 data point per minute).
+Each data point represents the peak bandwidth within that minute.
+If more than 70 data points exceed 500 Mbps, ignore the dynamic bandwidth limiting (including exceptions) and limit the bandwidth to 498 Mbps for the remainder of the day.
   
 
 
