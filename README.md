@@ -29,70 +29,84 @@ Requirements
 
 Installation
 
-	1.	Clone the repository:
+1.	**更新脚本文件：**
 
-git clone https://github.com/<your-github-username>/95th-percentile-bandwidth-limiter.git
-cd 95th-percentile-bandwidth-limiter
+•	将修改后的脚本保存为/root/bandwidth_control.sh
 
+•	确保脚本具有执行权限：
 
-	2.	Make the script executable:
+```c
+chmod +x /root/bandwidth_control.sh
+```
 
-chmod +x bandwidth_limiter.sh
+2.	**创建**systemd
 
+•	创建 /etc/systemd/system/bandwidth_control.service
 
-	3.	Install required dependencies:
-	•	Install ifstat:
+```c
+[Unit]
+Description=Bandwidth Control Service
+After=network.target
 
-sudo apt install ifstat
+[Service]
+Type=simple
+ExecStart=/bin/bash /root/bandwidth_control.sh
+Restart=on-failure
 
+[Install]
+WantedBy=multi-user.target
+```
 
-	•	Ensure tc (part of iproute2) is installed:
+启动服务：
 
-sudo apt install iproute2
+```c
+systemctl daemon-reload
+systemctl enable bandwidth_control.service
+systemctl start bandwidth_control.service
 
-Usage
+systemctl stop bandwidth_control.service
+systemctl restart bandwidth_control.service
+```
 
-Configuration
+**3.	验证服务运行状态：**
 
-Edit the script to match your environment:
-	•	Interface Settings:
-	•	INTERFACE: Network interface to monitor (e.g., eno2).
-	•	IFB_INTERFACE: Virtual ifb interface for ingress limiting (default: ifb0).
-	•	Bandwidth Settings:
-	•	LIMIT_BW: Enforced limit in Kbps (default: 498000 for 498 Mbps).
-	•	THRESHOLD_BW: Trigger threshold in Kbps (default: 500000 for 500 Mbps).
-	•	LIMIT_DURATION: Duration of bandwidth limit in seconds (default: 420 seconds or 7 minutes).
-	•	Monitoring and Logging:
-	•	DATA_POINTS_FILE: Log file for bandwidth usage (default: /var/log/bandwidth_usage.log).
-	•	LIMIT_FLAG_FILE: File to indicate active bandwidth limiting (default: /tmp/bandwidth_limited).
+```c
+systemctl status bandwidth_control.service
+```
 
-Running the Script
+1.  调试日志
 
-	1.	Start the script:
+```c
+tail -f /var/log/bandwidth_debug.log
+```
 
-sudo ./bandwidth_limiter.sh
+调试日志轮换 
 
+nano /etc/logrotate.d/bandwidth_debug
 
-	2.	Logs are saved in the following locations:
-	•	Bandwidth Usage Data: /var/log/bandwidth_usage.log
-	•	Control Logs: /var/log/bandwidth_control.log
-	•	Debug Logs: /var/log/bandwidth_debug.log
+```c
+/var/log/bandwidth_debug.log {
+    daily
+    rotate 7
+    compress
+    missingok
+    notifempty
+    size 50M
+    create 644 root root
+}
+```
 
-Technical Details
+1. 流量记录
 
-	1.	Ingress and Egress Limiting:
-	•	Uses tc to enforce limits on egress traffic.
-	•	Redirects ingress traffic to an ifb virtual interface for bandwidth control.
-	2.	Dynamic Thresholds:
-	•	Tracks bandwidth usage per minute and applies limits based on sustained traffic patterns.
-	3.	1:2 Burst Support:
-	•	Limits traffic at 498 Mbps with a 2x burst allowance to handle short spikes:
+```c
+cat /var/log/bandwidth_usage.log 
+```
 
-tc qdisc replace dev $INTERFACE root tbf rate 498000kbit burst 996000kbit latency 400ms
+1. 限速记录
 
-
-	4.	Time-based Exceptions:
-	•	Ensures limits are not enforced during defined peak hours (19:00–23:00).
+```c
+cat /var/log/bandwidth_control.log
+```
 
 Example Scenarios
 
@@ -112,7 +126,7 @@ MIT License
 
 MIT License
 
-Copyright (c) 2024 <Your Name>
+Copyright (c) 2024 <tenotek>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -132,4 +146,3 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
-Replace <your-github-username> with your actual GitHub username and <Your Name> with your name. Let me know if you need any additional modifications!
