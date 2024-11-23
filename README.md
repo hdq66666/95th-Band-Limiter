@@ -3,7 +3,7 @@
 A script to dynamically manage network traffic based on **95th percentile bandwidth limiting**. It enforces compliance with provider contracts by monitoring traffic patterns, supporting **1:2 burst configurations**, and applying intelligent bandwidth limits to prevent overuse and ensure smooth operations.
 
 
----
+
 
 ## Deployment Steps
 
@@ -15,7 +15,7 @@ Ensure the script has executable permissions:
 chmod +x /root/bandwidth_control.sh
 ```
 
----
+
 
 ### 2. Create a Systemd Service
 To run the script automatically and ensure it stays active, create a systemd service file at `/etc/systemd/system/bandwidth_control.service`:
@@ -34,7 +34,7 @@ Restart=on-failure
 WantedBy=multi-user.target
 ```
 
----
+
 
 ### 3. Start the Service
 Reload systemd to recognize the new service:
@@ -52,7 +52,7 @@ Start the service:
 systemctl start bandwidth_control.service
 ```
 
----
+
 
 ### 4. Verify the Service
 To check the service status and ensure it's running:
@@ -66,7 +66,7 @@ systemctl stop bandwidth_control.service
 systemctl restart bandwidth_control.service
 ```
 
----
+
 
 ### 5. Configure Log Rotation for Debug Logs
 To manage debug logs and prevent disk space issues, create a log rotation configuration file at `/etc/logrotate.d/bandwidth_debug`:
@@ -83,7 +83,7 @@ To manage debug logs and prevent disk space issues, create a log rotation config
 }
 ```
 
----
+
 
 ## Logs and Debugging
 
@@ -105,7 +105,7 @@ Review applied limits and actions:
 cat /var/log/bandwidth_control.log
 ```
 
----
+
 
 ## Key Features Recap
 
@@ -114,13 +114,13 @@ cat /var/log/bandwidth_control.log
 - **Daily Reset**: Resets all data points and limits at midnight.
 - **Daily Monitoring**: Caps bandwidth for the remainder of the day if usage exceeds **500 Mbps** for more than **70 out of 1440 minutes**.
 
----
+
 
 ## License
 
 This project is licensed under the MIT License. See the LICENSE file for details.
 
----
+
 
 ### MIT License
 
