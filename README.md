@@ -4,21 +4,19 @@ A script to dynamically manage network traffic based on **95th percentile bandwi
 
 预设特性
 
-	•	动态带宽限速: 当带宽连续3分钟（连续3个数据点）超过500 Mbps时，自动限速至498 Mbps（1:2突发模式）。
-	•	例外时间段: 每天19:00至23:00期间不生效。
-	•	每日重置: 每天凌晨清除所有数据点并重置限速规则。
-	•	每日带宽监控: 如果每天超过70个数据点的带宽超过500 Mbps，则无视动态带宽限速（包含例外）当天剩余时间限速至498 Mbps。
+		动态带宽限速: 当带宽连续3分钟（连续3个数据点）超过500 Mbps时，自动限速至498 Mbps（1:2突发模式）。
+		例外时间段: 每天19:00至23:00期间不生效。
+		每日重置: 每天凌晨清除所有数据点并重置限速规则。
+		每日带宽监控: 如果每天超过70个数据点的带宽超过500 Mbps，则无视动态带宽限速（包含例外）当天剩余时间限速至498 Mbps。
 
 Features
 
-	•	Dynamic Bandwidth Limiting: Automatically limits bandwidth to 498 Mbps (1:2 burst) when usage exceeds 500 Mbps for 3 consecutive minutes.
-	•	Time-Based Exceptions: Skips limiting during peak hours (19:00–23:00).
-	•	Daily Reset: Resets all data points and limits at midnight.
-	•	Daily Bandwidth Monitoring: Caps bandwidth for the remainder of the day if usage exceeds 500 Mbps for more than 70 out of 1440 minutes, ignoring dynamic limiting (including exceptions).
+		Dynamic Bandwidth Limiting: Automatically limits bandwidth to 498 Mbps (1:2 burst) when usage exceeds 500 Mbps for 3 consecutive minutes.
+		Time-Based Exceptions: Skips limiting during peak hours (19:00–23:00).
+		Daily Reset: Resets all data points and limits at midnight.
+		Daily Bandwidth Monitoring: Caps bandwidth for the remainder of the day if usage exceeds 500 Mbps for more than 70 out of 1440 minutes, ignoring dynamic limiting (including exceptions).
   
 
-
- 3、每日00:00重置
 
 ## Deployment Steps
 
