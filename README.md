@@ -5,7 +5,7 @@ A script to dynamically manage network traffic based on **95th percentile bandwi
 需要部署在宿主机的出口网卡上，且该脚本仅在 Proxmox VE 8（Debian 12）上通过测试。  
 This bandwidth management rule should be deployed on the host machine, and the system has only been tested on Proxmox VE 8 (based on Debian 12).
 
----
+
 
 ## 预设特性 / Preset Features
 
@@ -29,7 +29,7 @@ This bandwidth management rule should be deployed on the host machine, and the s
   如果累计超过70个数据点的带宽超过500 Mbps，则无视动态带宽限速（包含例外），当天剩余时间限速至498 Mbps。  
   If more than 70 data points exceed 500 Mbps, ignore the dynamic bandwidth limiting (including exceptions) and limit the bandwidth to 498 Mbps for the remainder of the day.
 
----
+
 
 ## 部署步骤 / Deployment Steps
 
@@ -43,7 +43,7 @@ Ensure the script has executable permissions:
 chmod +x /root/bandwidth_control.sh
 ```
 
----
+
 
 ### 2. 创建 Systemd 服务 / Create a Systemd Service
 创建一个 systemd 服务文件 `/etc/systemd/system/bandwidth_control.service`：  
@@ -62,7 +62,7 @@ Restart=on-failure
 WantedBy=multi-user.target
 ```
 
----
+
 
 ### 3. 启动服务 / Start the Service
 重新加载 systemd：  
@@ -83,7 +83,7 @@ Start the service:
 systemctl start bandwidth_control.service
 ```
 
----
+
 
 ### 4. 验证服务 / Verify the Service
 检查服务状态：  
@@ -99,7 +99,7 @@ systemctl stop bandwidth_control.service
 systemctl restart bandwidth_control.service
 ```
 
----
+
 
 ### 5. 配置日志轮替 / Configure Log Rotation
 为了管理调试日志并防止磁盘空间占用，创建一个日志轮替配置文件 `/etc/logrotate.d/bandwidth_debug`：  
@@ -116,7 +116,7 @@ To manage debug logs and prevent disk space issues, create a log rotation config
 }
 ```
 
----
+
 
 ## 日志与调试 / Logs and Debugging
 
@@ -141,7 +141,7 @@ Review applied limits and actions:
 cat /var/log/bandwidth_control.log
 ```
 
----
+
 
 ## License
 
