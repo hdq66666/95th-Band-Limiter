@@ -1,44 +1,26 @@
-95th Percentile Bandwidth Limiter
+# 95th Percentile Bandwidth Limiter
 
-A dynamic bandwidth management script enforcing 95th percentile bandwidth limiting. This script ensures compliance with provider bandwidth contracts or self-imposed limits by dynamically adjusting traffic using a 1:2 burst configuration and real-time usage monitoring.
+A script to dynamically manage network traffic based on **95th percentile bandwidth limiting**. It enforces compliance with provider contracts by monitoring traffic patterns, supporting **1:2 burst configurations**, and applying intelligent bandwidth limits to prevent overuse and ensure smooth operations.
 
-Why 95th Percentile?
 
-The 95th percentile method is a standard in network billing, allowing for brief traffic bursts while managing sustained overuse. This script automates limit enforcement, ensuring compliance with the 95th percentile model to prevent billing overruns or network performance degradation.
+---
 
-Features
+## Deployment Steps
 
-	1.	Dynamic Bandwidth Limiting:
-	•	Limits bandwidth to 498 Mbps (1:2 burst) if usage exceeds 500 Mbps for 3 consecutive minutes.
-	•	Applies limits for 7 minutes after the condition is met.
-	2.	Time-Based Exceptions:
-	•	No bandwidth limiting is applied during peak hours (19:00–23:00).
-	3.	Daily Monitoring:
-	•	Captures 1440 data points per day (one per minute).
-	•	If more than 70 data points exceed 500 Mbps, limits are applied for the remainder of the day, regardless of peak-hour exceptions.
-	4.	Automatic Reset:
-	•	All data points and limits are reset at midnight (00:00) daily.
-	5.	Comprehensive Logging:
-	•	Tracks bandwidth usage, limiting actions, and debugging for full transparency.
+### 1. Save the Script
+Save the provided script to your system, for example, as `/root/bandwidth_control.sh`.
 
-Requirements
-
-	•	Linux kernel support for tc (traffic control) and ifb (Intermediate Functional Block).
-	•	ifstat for real-time bandwidth monitoring.
-	•	Root privileges to execute traffic control (tc) commands.
-
-Installation
-
-1. Save the Script
-
-Save the script as /root/bandwidth_control.sh and ensure it is executable:
-
+Ensure the script has executable permissions:
+```bash
 chmod +x /root/bandwidth_control.sh
+```
 
-2. Set Up a Systemd Service
+---
 
-Create a systemd service file at /etc/systemd/system/bandwidth_control.service:
+### 2. Create a Systemd Service
+To run the script automatically and ensure it stays active, create a systemd service file at `/etc/systemd/system/bandwidth_control.service`:
 
+```ini
 [Unit]
 Description=Bandwidth Control Service
 After=network.target
@@ -50,28 +32,46 @@ Restart=on-failure
 
 [Install]
 WantedBy=multi-user.target
+```
 
-Reload the systemd daemon and manage the service:
+---
 
+### 3. Start the Service
+Reload systemd to recognize the new service:
+```bash
 systemctl daemon-reload
+```
+
+Enable the service to start at boot:
+```bash
 systemctl enable bandwidth_control.service
+```
+
+Start the service:
+```bash
 systemctl start bandwidth_control.service
+```
+
+---
+
+### 4. Verify the Service
+To check the service status and ensure it's running:
+```bash
+systemctl status bandwidth_control.service
+```
 
 To stop or restart the service:
-
+```bash
 systemctl stop bandwidth_control.service
 systemctl restart bandwidth_control.service
+```
 
-3. Verify Service Status
+---
 
-Check if the service is running:
+### 5. Configure Log Rotation for Debug Logs
+To manage debug logs and prevent disk space issues, create a log rotation configuration file at `/etc/logrotate.d/bandwidth_debug`:
 
-systemctl status bandwidth_control.service
-
-4. Configure Debug Log Rotation
-
-To prevent debug logs from consuming excessive disk space, configure log rotation by creating /etc/logrotate.d/bandwidth_debug:
-
+```ini
 /var/log/bandwidth_debug.log {
     daily
     rotate 7
@@ -81,42 +81,50 @@ To prevent debug logs from consuming excessive disk space, configure log rotatio
     size 50M
     create 644 root root
 }
+```
 
-Logs and Debugging
+---
 
-	•	Debug Logs:
-View real-time debug logs for troubleshooting:
+## Logs and Debugging
 
+### Debug Logs
+For real-time debugging:
+```bash
 tail -f /var/log/bandwidth_debug.log
+```
 
-
-	•	Bandwidth Usage Logs:
-Review captured bandwidth data:
-
+### Bandwidth Usage Logs
+Check captured bandwidth usage data:
+```bash
 cat /var/log/bandwidth_usage.log
+```
 
-
-	•	Control Logs:
-Check limiting actions and rule applications:
-
+### Bandwidth Control Logs
+Review applied limits and actions:
+```bash
 cat /var/log/bandwidth_control.log
+```
 
-Example Scenarios
+---
 
-	1.	Sustained High Traffic:
-	•	If bandwidth exceeds 500 Mbps for 3 consecutive minutes:
-	•	Bandwidth is limited to 498 Mbps (1:2 burst) for 7 minutes.
-	•	No limits are enforced during peak hours (19:00–23:00).
-	2.	Daily Excessive Usage:
-	•	If more than 70 out of 1440 data points exceed 500 Mbps:
-	•	Bandwidth is limited to 498 Mbps for the remainder of the day, ignoring peak-hour exceptions.
+## Key Features Recap
 
-License
+- **Dynamic Limiting**: Automatically limits bandwidth to **498 Mbps (1:2 burst)** when usage exceeds **500 Mbps** for 3 consecutive minutes.
+- **Time-Based Exceptions**: Skips limiting during peak hours (**19:00–23:00**).
+- **Daily Reset**: Resets all data points and limits at midnight.
+- **Daily Monitoring**: Caps bandwidth for the remainder of the day if usage exceeds **500 Mbps** for more than **70 out of 1440 minutes**.
+
+---
+
+## License
 
 This project is licensed under the MIT License. See the LICENSE file for details.
 
-MIT License
+---
 
+### MIT License
+
+```plaintext
 MIT License
 
 Copyright (c) 2024 tenotek
@@ -138,5 +146,6 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+```
 
-This version of the README emphasizes the 95th percentile limiting mechanism and details the 1:2 burst configuration. Let me know if you want further refinements!
+This README provides both real-world usage scenarios and step-by-step deployment instructions. Let me know if you need further adjustments!
