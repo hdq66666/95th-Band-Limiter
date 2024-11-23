@@ -3,7 +3,13 @@
 A script to dynamically manage network traffic based on **95th percentile bandwidth limiting**. It enforces compliance with provider contracts by monitoring traffic patterns, supporting **1:2 burst configurations**, and applying intelligent bandwidth limits to prevent overuse and ensure smooth operations.
 
 
+## Key Features 
 
+- **Dynamic Limiting**: Automatically limits bandwidth to **498 Mbps (1:2 burst)** when usage exceeds **500 Mbps** for 3 consecutive minutes.
+- **Time-Based Exceptions**: Skips limiting during peak hours (**19:00–23:00**).
+- **Daily Reset**: Resets all data points and limits at midnight.
+- **Daily Monitoring**: Caps bandwidth for the remainder of the day if usage exceeds **500 Mbps** for more than **70 out of 1440 minutes**.
+  
 
 ## Deployment Steps
 
@@ -107,12 +113,6 @@ cat /var/log/bandwidth_control.log
 
 
 
-## Key Features Recap
-
-- **Dynamic Limiting**: Automatically limits bandwidth to **498 Mbps (1:2 burst)** when usage exceeds **500 Mbps** for 3 consecutive minutes.
-- **Time-Based Exceptions**: Skips limiting during peak hours (**19:00–23:00**).
-- **Daily Reset**: Resets all data points and limits at midnight.
-- **Daily Monitoring**: Caps bandwidth for the remainder of the day if usage exceeds **500 Mbps** for more than **70 out of 1440 minutes**.
 
 
 
